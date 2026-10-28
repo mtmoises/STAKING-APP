@@ -1,63 +1,55 @@
-## Foundry
+# 🥩 Fixed-Term Staking Smart Contract & Ecosystem
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A secure, gas-optimized token staking and reward distribution smart contract suite built with **Solidity 0.8.24** and fully tested using **Foundry**. 
 
-Foundry consists of:
+This contract allows users to deposit a fixed amount of ERC-20 tokens for a defined staking period and earn native Ether (ETH) rewards upon successful completion.
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+---
 
-## Documentation
+## 📌 Architecture & Features
 
-https://book.getfoundry.sh/
+- **Fixed-Term Lockup:** Enforces a rigid staking period (`stakingPeriod`) and a fixed deposit amount (`fixedStakingAmount`) to manage protocol liquidity securely.
+- **Native Reward Distribution:** Distributes native ETH rewards (`rewardPeriod`) to stakers upon successful completion of the lockup time.
+- **Reentrancy & CEI Compliance:** Follows Checks-Effects-Interactions patterns on core deposit and withdrawal paths.
+- **Admin Controls:** Utilizes OpenZeppelin's `Ownable` modifier to restrict critical state changes (such as modifying staking periods) to the contract owner.
+- **Robust Test Coverage:** Includes unit and integration tests covering positive flows, edge cases, time-warp simulations via Foundry, and failure paths.
 
-## Usage
+---
 
-### Build
+## 🛠 Tech Stack & Tools
 
-```shell
-$ forge build
-```
+- **Language:** Solidity `0.8.24`
+- **Framework:** Foundry (Forge & Cast)
+- **Libraries:** OpenZeppelin Contracts (`Ownable`, `IERC20`)
+- **Target Network:** EVM Compatible Chains
 
-### Test
+---
 
-```shell
-$ forge test
-```
+## 🚀 Smart Contract Overview
 
-### Format
+### Core Functions
 
-```shell
-$ forge fmt
-```
+1. **`depositTokens(uint256 TokenAmountToDeposit_)`**
+   - Validates that the deposited amount matches `fixedStakingAmount`.
+   - Ensures the user hasn't already active positions (`userBalance == 0`).
+   - Transfers tokens safely from user to contract using `transferFrom`.
 
-### Gas Snapshots
+2. **`withdrawTokens()`**
+   - Permite al usuario retirar la totalidad de sus tokens depositados una vez finalizado el ciclo o si decide salir, reseteando su balance en el contrato.
 
-```shell
-$ forge snapshot
-```
+3. **`claimRewards()`**
+   - Verifica que el usuario cumpla con el tiempo de bloqueo (`block.timestamp - elapsePeriod >= stakingPeriod`).
+   - Transfiere la recompensa en ETH acumulada al usuario (`msg.sender.call{value: rewardPeriod}`).
 
-### Anvil
+---
 
-```shell
-$ anvil
-```
+## ⚡ Quickstart & Testing (Foundry)
 
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
+### 1. Clone Repository & Install Dependencies
+```bash
+git clone [https://github.com/mtmoises/staking-app.git](https://github.com/mtmoises/staking-app.git)
+cd staking-app
+forge install
 
 ```shell
 $ forge --help
